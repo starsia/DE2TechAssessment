@@ -96,13 +96,35 @@ The `agents/skills/` folder contains project-specific guidance files for the thr
 ```
 .
 ├── README.md
+├── AGENTS.md
 ├── agents
 │   └── skills
 │       ├── data-pipelines.md
 │       ├── database-design.md
 │       └── system-design.md
 ├── docs
+|  ├── data-pipelines.md
+|  ├── database-design.md
+|  └── system-design.md
 ├── samples
-└── src
+|  ├── successful-applications
+|  └── unsuccessful-applications
+├── src
+|  ├── data-pipelines
+|  |   └── init.py
+|  |   └── pipeline.py
+|  |   └── transformations.py
+|  |   └── validators.py
+|  ├── database
+|  |   ├── ddl
+|  |   |   ├── 001_create_tables.sql
+|  |   |   ├── 002_constraints_and_indexes.sql
+|  |   |   ├── 003_optional_roles_grants.sql
+|  |   └── queries
+|  |       ├── top-3-most-frequently-bought-items.sql
+|  |       └── top-10-members-by-spending.sql
+|  └── system-design
+└── tests
+   └── data-pipelines
 
 ```

@@ -29,33 +29,36 @@ def test_split_name_adds_first_and_last_name_columns():
     assert "first_name" in result.columns
     assert "last_name" in result.columns
 
-# def test_format_birthday_normalizes_dates_to_yyyymmdd():
-#     rows = load_rows("test_success.csv")
+    assert result.loc[0, "first_name"] == "John"
+    assert result.loc[0, "last_name"] == "Smith"
 
-#     result = format_birthday(rows)
+def test_format_birthday_formats_as_yyyymmdd():
+    df = load_rows("test_success.csv")
 
-#     assert(result[1][3] == "20220405")
+    result = format_birthday(df)
 
-# def test_remove_missing_name_filters_blank_names():
-#     rows = load_rows("test_missing_name.csv")
+    assert result.loc[0, "birthday"] == "19980101"
 
-#     result = remove_missing_name(rows)
+def test_remove_missing_name_removes_rows_without_name():
+    df = load_rows("test_missing_name.csv")
 
-#     assert(True)
+    result = remove_missing_name(df)
 
+    assert len(result) == len(df) - 1
+    assert result["name"].isna().sum() == 0
 
-# def test_create_above18_derives_age_flag():
-#     rows = load_rows("test_success.csv")
+def test_create_above18_adds_column():
+    df = load_rows("test_success.csv")
 
-#     result = create_above18(rows)
+    result = create_above18(df)
 
-#     assert(True)
+    assert "above_18" in result.columns
+    assert result.loc[0, "above_18"] is True
 
+def test_create_membership_id_adds_column():
+    df = load_rows("test_success.csv")
 
-# def test_create_membership_id_uses_last_name_and_birthdate_hash():
-#     rows = load_rows("test_success.csv")
+    result = create_membership_id(df)
 
-#     result = create_membership_id(rows)
-
-#     assert(True)
-
+    assert "membership_id" in result.columns
+    # assert result.loc[0, "membership_id"].startswith("Smith_")

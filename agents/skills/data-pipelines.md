@@ -26,6 +26,7 @@ Convert the raw application CSV files into validated outputs for successful and 
 - Write tests for each validation rule before implementing the transformation logic.
 - Add edge-case tests for malformed dates, whitespace in mobile numbers, and names with titles or suffixes.
 - Verify that successful and unsuccessful counts are stable on the sample datasets.
+- Testing will be done using pytest.
 
 ### Validation Artifacts
 

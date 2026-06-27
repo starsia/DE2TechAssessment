@@ -17,8 +17,16 @@ You are required to format datasets in the following manner:
 - Membership IDs for successful applications should be the user's last name, followed by a SHA256 hash of the applicant's birthday, truncated to first 5 digits of hash (i.e <last_name>_<hash(YYYYMMDD)>)
 '''
 
+
 def split_name(df):
-    return pd.DataFrame([])
+    names = df["name"].str.split(" ", n=1, expand=True)
+
+    return names
+    # df["first_name"] = names[0]
+    # df["last_name"] = names[1]
+
+    # print(df)
+    # return df
 
 def format_birthday(df):
     return pd.DataFrame([])

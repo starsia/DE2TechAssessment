@@ -109,22 +109,37 @@ The `agents/skills/` folder contains project-specific guidance files for the thr
 ├── samples
 |  ├── successful-applications
 |  └── unsuccessful-applications
-├── src
-|  ├── data-pipelines
-|  |   └── init.py
-|  |   └── pipeline.py
-|  |   └── transformations.py
-|  |   └── validators.py
-|  ├── database
-|  |   ├── ddl
-|  |   |   ├── 001_create_tables.sql
-|  |   |   ├── 002_constraints_and_indexes.sql
-|  |   |   ├── 003_optional_roles_grants.sql
-|  |   └── queries
-|  |       ├── top-3-most-frequently-bought-items.sql
-|  |       └── top-10-members-by-spending.sql
-|  └── system-design
+── src
+│   ├── data-pipelines
+│   │   └── init.py
+│   ├── data_pipelines
+│   │   ├── operations
+│   │   │   ├── __init__.py
+│   │   │   ├── reader.py
+│   │   │   ├── transformations.py
+│   │   │   ├── validators.py
+│   │   │   └── writer.py
+│   │   └── pipeline.py
+│   ├── database
+│   │   ├── ddl
+│   │   │   ├── 001_create_tables.sql
+│   │   │   ├── 002_constraints_and_indexes.sql
+│   │   │   └── 003_optional_roles_grants.sql
+│   │   └── queries
+│   │       ├── top-10-members-by-spending.sql
+│   │       └── top-3-most-frequently-bought-items.sql
+│   └── system-design
 └── tests
-   └── data-pipelines
+    └── data_pipelines
+        ├── __pycache__
+        │   ├── test_transformations.cpython-312-pytest-9.1.1.pyc
+        │   └── test_validators.cpython-312-pytest-9.1.1.pyc
+        ├── fixtures
+        │   ├── test_invalid.csv
+        │   ├── test_missing_name.csv
+        │   ├── test_shortened_applications_dataset_1.csv
+        │   └── test_success.csv
+        ├── test_transformations.py
+        └── test_validators.py
 
 ```

@@ -1,43 +1,77 @@
+from __future__ import annotations
+from .helpers import normalize_date
+from .validators import is_above18
+import hashlib
 import pandas as pd
 
-''' 
-We have to apply some transformations to the data. They are split up to ensure scalability and testability
-Applications are batched into a varying number of datasets and dropped into a folder on an hourly basis. You are required to set up a pipeline to ingest, clean, perform validity checks, and create membership IDs for successful applications. An application is successful if:
+REFERENCE_DATE = pd.Timestamp("2022-01-01")
 
-- Application mobile number is 8 digits
-- Applicant is over 18 years old as of 1 Jan 2022
-- Applicant has a valid email (email ends with @emailprovider.com or @emailprovider.net)
 
-You are required to format datasets in the following manner:
+# ---------- Helper functions ----------
 
-- Split name into first_name and last_name
-- Format birthday field into YYYYMMDD
-- Remove any rows which do not have a name field (treat this as unsuccessful applications)
-- Create a new field named above_18 based on the applicant's birthday
-- Membership IDs for successful applications should be the user's last name, followed by a SHA256 hash of the applicant's birthday, truncated to first 5 digits of hash (i.e <last_name>_<hash(YYYYMMDD)>)
-'''
 
+def generate_membership_id(last_name: str, birthday: str) -> str:
+    """
+    Generate membership ID:
+
+        <last_name>_<first 5 chars of SHA256(YYYYMMDD)>
+    """
+
+    digest = hashlib.sha256(
+        birthday.encode("utf-8")
+    ).hexdigest()[:5]
+
+    return f"{last_name}_{digest}"
+
+
+# ---------- DataFrame transformations ----------
 
 def split_name(df):
+    df = df.copy()
+
     names = df["name"].str.split(" ", n=1, expand=True)
 
-    return names
-    # df["first_name"] = names[0]
-    # df["last_name"] = names[1]
+    df["first_name"] = names[0]
+    df["last_name"] = names[1]
 
-    # print(df)
-    # return df
+    return df
+
 
 def format_birthday(df):
-    return pd.DataFrame([])
+    df = df.copy()
+
+    df["date_of_birth"] = (
+        df["date_of_birth"]
+        .apply(normalize_date)
+    )
+
+    return df
+
 
 def remove_missing_name(df):
-    return pd.DataFrame([])
+    return df.dropna(subset=["name"])
 
 
 def create_above18(df):
-    return pd.DataFrame([])
+    df = df.copy()
+
+    df["above_18"] = (
+        df["date_of_birth"]
+        .apply(is_above18)
+    )
+
+    return df
 
 
 def create_membership_id(df):
-    return pd.DataFrame([])
+    df = df.copy()
+
+    df["membership_id"] = df.apply(
+        lambda row: generate_membership_id(
+            row["last_name"],
+            row["date_of_birth"],
+        ),
+        axis=1,
+    )
+
+    return df

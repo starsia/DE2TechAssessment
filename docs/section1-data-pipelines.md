@@ -34,3 +34,5 @@ pytest tests/data-pipelines/test_pipeline.py
 In the past I've built data pipelines using Airflow using official Docker images, but for this project, I will use cron to schedule the pipeline. The reason is that the pipeline is relatively simple and does not require complex scheduling or dependency management. Cron is lightweight and easy to set up, making it a suitable choice for this project.
 
 ### Future improvements
+
+I considered not creating a package for the pipeline, but I decided against it for now. It makes testing easier, and we don't have to update pipelines in different places if we want to make changes to the pipeline.

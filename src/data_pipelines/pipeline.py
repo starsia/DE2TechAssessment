@@ -1,20 +1,17 @@
-from reader import read_all
-from transformations import (
+from data_pipelines.operations.reader import read_all
+from operations import (
     split_name,
     format_birthday,
     remove_missing_name,
     create_above18,
     create_membership_id,
 )
-from validators import validate
-from writer import write
+from data_pipelines.operations.validators import validate
+from data_pipelines.operations.writer import write
 import pandas as pd
 
 def run_pipeline(*args, **kwargs):
-    return None
-
-
-def main(*args, **kwargs):
+    print("hello world")
     df = read_all()
 
     df = split_name(df)
@@ -33,3 +30,6 @@ def main(*args, **kwargs):
     write(unsuccessful)
 
     return None
+
+if __name__ == '__main__':
+    run_pipeline()

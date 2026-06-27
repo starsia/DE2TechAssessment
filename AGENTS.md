@@ -90,3 +90,19 @@ The `agents/skills/` folder contains project-specific guidance files for the thr
 - Do not introduce implementation code without a matching validation plan.
 - Do not delete or rewrite unrelated material unless it conflicts with the take-home guidance.
 - Keep diffs focused on the current slice.
+
+## Folder structure
+
+```
+.
+├── README.md
+├── agents
+│   └── skills
+│       ├── data-pipelines.md
+│       ├── database-design.md
+│       └── system-design.md
+├── docs
+├── samples
+└── src
+
+```

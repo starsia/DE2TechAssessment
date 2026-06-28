@@ -70,6 +70,12 @@ Note we have to make it executable by running the following command in the termi
 chmod +x scripts/run_pipeline.sh
 ```
 
+Note the path you are currently in. You can find it by running the following command in the terminal:
+
+```
+pwd
+```
+
 We will use cron to schedule the pipeline.
 
 ```
@@ -79,7 +85,13 @@ crontab -e
 Then add the following line to the crontab file:
 
 ```
-0 * * * * /path/to/scripts/run_pipeline.sh
+0 * * * * /bin/bash "$(pwd)/scripts/run_pipeline.sh" >> "$(USR_root)/cron_pipeline.log" 2>&1
+```
+
+We can check the cron logs by running the following command in the terminal:
+
+```bash
+cat ~/cron_pipeline.log
 ```
 
 ### How to run

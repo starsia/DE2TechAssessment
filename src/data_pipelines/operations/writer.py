@@ -45,11 +45,15 @@ def write(
         index=False,
     )
 
-    # move processed source files
+    # Make transactions atomic
+    copied = []
+
     for file in input_files:
-        shutil.move(
-            str(file),
-            str(input_dir / file.name),
-        )
+        destination = input_dir / file.name
+        shutil.copy2(file, destination)
+        copied.append(file)
+
+    for file in copied:
+        file.unlink()
 
     return batch

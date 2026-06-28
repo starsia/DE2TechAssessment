@@ -47,6 +47,9 @@ def split_name(name: str) -> tuple[str, str]:
     - Mr. Patrick Star will be split into Mr. Patrick (first name) and Star (last name)
     """
 
+    if pd.isna(name):
+        return "", ""
+
     parts = str(name).strip().rsplit(" ", maxsplit=1)
 
     if len(parts) == 1:

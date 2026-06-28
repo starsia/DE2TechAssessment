@@ -15,8 +15,14 @@ def normalize_date(date_of_birth: str) -> str:
         mm/dd/yyyy
     """
 
+    value = str(date_of_birth).strip()
+
+    # Already YYYYMMDD
+    if len(value) == 8 and value.isdigit():
+        return value
+
     return (
-        pd.to_datetime(date_of_birth, format="mixed")
+        pd.to_datetime(value, format="mixed")
         .strftime("%Y%m%d")
     )
 
@@ -35,6 +41,12 @@ def generate_membership_id(last_name: str, birthday: str) -> str:
     return f"{last_name}_{digest}"
 
 def split_name(name: str) -> tuple[str, str]:
+    """
+    Split name into first and last names:
+    - William Dixon will be split into William (first name) and Dixon (last name)
+    - Mr. Patrick Star will be split into Mr. Patrick (first name) and Star (last name)
+    """
+
     parts = str(name).strip().rsplit(" ", maxsplit=1)
 
     if len(parts) == 1:

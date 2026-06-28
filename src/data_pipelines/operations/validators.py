@@ -4,17 +4,22 @@ import re
 from .constants import REFERENCE_DATE
 from .helpers import normalize_date
 
-EMAIL_PATTERN = re.compile(
-    r"^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+[A-Za-z]{2,}$"
-)
-
 def validate_mobile_no(phone_number: str) -> bool:
+    """
+    Returns True if phone number is valid:
+    - Phone number is exactly 8 digits long
+    - Phone number contains only digits
+    """
     phone_number = str(phone_number).replace(" ", "")
 
     return phone_number.isdigit() and len(phone_number) == 8
 
-
 def validate_email(email: str) -> bool:
+    """
+    Returns True if email is valid
+    """
+    EMAIL_PATTERN = re.compile(
+    r"^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+[A-Za-z]{2,}$")
 
     email = str(email).strip().lower()
 

@@ -29,9 +29,9 @@ def test_mobile_length():
 def test_validate_email():
     assert validate_email("john@emailprovider.com")
     assert validate_email("john@emailprovider.net")
+    assert validate_email("john@gmail.com")
+    assert validate_email("alice@company.org")
 
-    assert not validate_email("john@gmail.com")
-    assert not validate_email("alice@company.org")
     assert not validate_email("not-an-email")
     assert not validate_email("alice@")
     assert not validate_email("@emailprovider.com")

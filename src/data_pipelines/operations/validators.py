@@ -8,11 +8,6 @@ EMAIL_PATTERN = re.compile(
     r"^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+[A-Za-z]{2,}$"
 )
 
-ALLOWED_DOMAINS = {
-    "emailprovider.com",
-    "emailprovider.net",
-}
-
 def validate_mobile_no(phone_number: str) -> bool:
     phone_number = str(phone_number).replace(" ", "")
 
@@ -23,12 +18,10 @@ def validate_email(email: str) -> bool:
 
     email = str(email).strip().lower()
 
-    if not EMAIL_PATTERN.match(email):
-        return False
+    if EMAIL_PATTERN.match(email):
+        return True
 
-    domain = email.split("@")[-1]
-
-    return domain in ALLOWED_DOMAINS
+    return False
 
 
 def validate_above18(date_of_birth: str) -> bool:

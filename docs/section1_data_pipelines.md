@@ -26,6 +26,13 @@ To summarise, the business rules lives in validators.py, while every column mani
 
 The pipeline.py script orchestrates the workflow of the data pipeline. It reads the raw CSV files, applies the necessary transformations and validations, and writes the processed data to the output files. The script is designed to be modular, allowing for easy addition or modification of transformations and validations as needed.
 
+After processing, we move the processed data into a new folder called "output" to avoid reprocessing the same files in the next cron execution. The output folder will contain two subfolders: "successful" and "unsuccessful", which will contain the processed data for successful and unsuccessful applications, respectively.
+
+The file in the `data/incoming` folder will be moved to `data/raw_archives` to again prevent reprocessing of the same file in the next cron execution.
+
+Heres is the overall flow:
+`incoming/` -> reader(extract) -> pipeline (transform) -> writer(load) -> `raw_archives/`
+
 ### Data sources
 
 We have two CSV files in data/raw. The extraction pipeline should enter the data/incoming folder and read the CSV files. The pipeline will then apply the necessary transformations and validations to the data, and write the processed data to the data/processed folder. They will be output into the pipeline folder, split into sucessful and unsuccessful.
@@ -33,6 +40,26 @@ We have two CSV files in data/raw. The extraction pipeline should enter the data
 ### Scheduling (cron)
 
 We will use cron to schedule the pipeline. The pipeline will be scheduled to run every hour. The cron job will execute the pipeline.py script, which will orchestrate the workflow and call the necessary functions from the other modules.
+
+The script can be found in `scripts/run_pipeline.sh`
+
+Note we have to make it executable by running the following command in the terminal:
+
+```bash
+chmod +x scripts/run_pipeline.sh
+```
+
+We will use cron to schedule the pipeline.
+
+```
+crontab -e
+```
+
+Then add the following line to the crontab file:
+
+```
+0 * * * * /path/to/scripts/run_pipeline.sh
+```
 
 ### How to run
 

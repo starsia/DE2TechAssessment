@@ -30,8 +30,29 @@ After processing, we move the processed data into a new folder called "output" t
 
 The file in the `data/incoming` folder will be moved to `data/raw_archives` to again prevent reprocessing of the same file in the next cron execution.
 
+We model a real ETL batch run, where each execution has its own output directory.
+
 Heres is the overall flow:
-`incoming/` -> reader(extract) -> pipeline (transform) -> writer(load) -> `raw_archives/`
+`to_process/` -> reader(extract) -> pipeline (transform) -> writer(load) -> `output/batch_timestamp/` -> `successful.csv` and `unsuccessful.csv`
+
+```
+data/
+├── to_process/
+│   ├── applications_dataset_1.csv
+│   ├── applications_dataset_2.csv
+│   └── applications_dataset_3.csv
+│
+├── output/
+│   ├── 20260628_180000/
+│   │   ├── input/
+│   │   │   ├── applications_dataset_1.csv
+│   │   │   ├── applications_dataset_2.csv
+│   │   │   └── applications_dataset_3.csv
+│   │   ├── successful.csv
+│   │   └── unsuccessful.csv
+│   │
+│   └── ...
+```
 
 ### Data sources
 

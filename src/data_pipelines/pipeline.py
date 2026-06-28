@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 import sys
 
@@ -71,9 +72,12 @@ if __name__ == "__main__":
 
     df, files = read_all()
 
+    timestamp = datetime.now().strftime("%Y/%m/%d, %H:%M:%S")
+
     if df.empty:
-        print("No datasets found.")
+        print(f"No datasets found at {timestamp}")
         sys.exit(0)
+
 
     successful, unsuccessful = run_pipeline(df)
 

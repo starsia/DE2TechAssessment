@@ -79,5 +79,6 @@ if __name__ == '__main__':
 
     successful, unsuccessful = run_pipeline(df)
 
-    write(successful)
-    write(unsuccessful)
+    write(successful, unsuccessful)
+
+    # move incoming/applications_dataset_1.csv into raw/applications_dataset_1.csv

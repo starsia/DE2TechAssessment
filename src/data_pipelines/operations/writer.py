@@ -1,2 +1,2 @@
-def write(df):
+def write(successful_df, unsuccessful_df):
     return

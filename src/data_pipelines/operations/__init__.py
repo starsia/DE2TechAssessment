@@ -1,6 +1,5 @@
 from .transformations import (
     format_birthday,
-    remove_missing_name,
     create_above18,
     split_name_columns,
     create_membership_id_columns,

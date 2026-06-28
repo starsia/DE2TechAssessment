@@ -49,3 +49,9 @@ def validate_above18(date_of_birth: str) -> bool:
     )
 
     return age >= 18
+
+def validate_name(name: str) -> bool:
+    """
+    Returns True if name is not empty.
+    """
+    return pd.notna(name) and str(name).strip() != ""

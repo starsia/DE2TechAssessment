@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from data_pipelines.operations.validators import (
     validate_mobile_no,
     validate_email,
-    is_above18
+    validate_above18
 )
 
 def load_rows(filename):
@@ -36,8 +36,8 @@ def test_validate_email():
     assert not validate_email("alice@")
     assert not validate_email("@emailprovider.com")
 
-def test_validate_age():
-    assert is_above18("2000-01-01") is True
-    assert is_above18("2003-12-31") is True
-    assert is_above18("2004-01-01") is True   # exactly 18
-    assert is_above18("2004-01-02") is False  # one day too young, 17 years, 364 days
+def test_validate_above18():
+    assert validate_above18("2000-01-01") is True
+    assert validate_above18("2003-12-31") is True
+    assert validate_above18("2004-01-01") is True   # exactly 18
+    assert validate_above18("2004-01-02") is False  # one day too young, 17 years, 364 days

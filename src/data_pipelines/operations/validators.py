@@ -31,7 +31,7 @@ def validate_email(email: str) -> bool:
     return domain in ALLOWED_DOMAINS
 
 
-def is_above18(date_of_birth: str) -> bool:
+def validate_above18(date_of_birth: str) -> bool:
     """
     Returns True if applicant is over 18 as of 1 Jan 2022.
     Accepts any supported date format.

@@ -8,7 +8,6 @@ from data_pipelines.operations.transformations import split_name_columns
 from data_pipelines.operations.transformations import (
     split_name_columns,
     format_birthday,
-    remove_missing_name,
     create_above18,
     create_membership_id_columns,
 )

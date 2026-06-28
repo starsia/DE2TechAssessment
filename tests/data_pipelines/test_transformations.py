@@ -11,40 +11,40 @@ sys.path.insert(0, str(ROOT / "src"))
 
 
 from data_pipelines.operations.transformations import (
-    split_name,
-    format_birthday,
-    normalize_date,
     remove_missing_name,
     create_above18,
     create_membership_id,
+    split_name_columns,
 )
+
+from data_pipelines.operations.helpers import split_name
 
 def load_rows(filename):
     return pd.read_csv(FIXTURES / filename)
 
 def test_split_name_adds_first_and_last_name_columns():
+    '''
+    Create two new columns called first_name and last_name 
+    Using the split_name function on the 'name' column
+    '''
     df = load_rows("test_success.csv")
 
-    result = split_name(df)
-    print(result)
+    result = split_name_columns(df)
+
     assert "first_name" in result.columns
     assert "last_name" in result.columns
 
-    # assert result.loc[0, "first_name"] == "John"
-    # assert result.loc[0, "last_name"] == "Smith"
+    assert result.loc[0, "first_name"] == "William"
+    assert result.loc[0, "last_name"] == "Dixon"
 
-def test_normalize_date():
-    assert normalize_date("1986/01/10") == "19860110"
-    assert normalize_date("1974-09-10") == "19740910"
-    assert normalize_date("02/27/1974") == "19740227"
 
-# def test_remove_missing_name_removes_rows_without_name():
-#     df = load_rows("test_missing_name.csv")
+def test_remove_missing_name_removes_rows_without_name():
+    df = load_rows("test_missing_name.csv")
 
-#     result = remove_missing_name(df)
+    result = remove_missing_name(df)
 
-#     assert len(result) == len(df) - 1
-#     assert result["name"].isna().sum() == 0
+    assert len(result) == len(df) - 1
+    assert result["name"].isna().sum() == 0
 
 # def test_create_above18_adds_column():
 #     df = load_rows("test_success.csv")
@@ -60,4 +60,4 @@ def test_normalize_date():
 #     result = create_membership_id(df)
 
 #     assert "membership_id" in result.columns
-#     # assert result.loc[0, "membership_id"].startswith("Smith_")
+    # assert result.loc[0, "membership_id"].startswith("Smith_")

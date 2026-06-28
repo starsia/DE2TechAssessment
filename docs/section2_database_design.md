@@ -27,3 +27,24 @@ Note that we set a unit_price attribute in the `Transaction_Item` entity to supp
 The `Item` entity contains the attributes item_id, name, manufacturer_id, cost, and weight. The item_id is the primary key for the `Item` entity.
 
 The `Manufacturer` entity includes manufacturer_id and name. The manufacturer_id is the primary key for the `Manufacturer` entity. The `Makes` relationship between manufacturer and item is a one-to-many relationship, as a manufacturer can produce 0 or many items, but an item can only be produced by one manufacturer.
+
+## Setting up the postgres database using Docker
+
+The following commands are used to set up the postgres database using Docker. The Dockerfile is provided in the `database` folder.
+
+```bash
+docker compose up -d
+```
+
+If there are any issues with the database, you can check the logs using the following command:
+
+```bash
+docker compose logs -f db
+```
+
+If the schema is amended, we will have to remove the volume and rebuild the database. This can be done using the following commands:
+
+```bash
+docker compose down -v
+docker compose up -d
+```

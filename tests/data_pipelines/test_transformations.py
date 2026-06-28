@@ -11,9 +11,8 @@ sys.path.insert(0, str(ROOT / "src"))
 
 
 from data_pipelines.operations.transformations import (
-    remove_missing_name,
     create_above18,
-    create_membership_id,
+    create_membership_id_columns,
     split_name_columns,
 )
 
@@ -37,27 +36,18 @@ def test_split_name_adds_first_and_last_name_columns():
     assert result.loc[0, "first_name"] == "William"
     assert result.loc[0, "last_name"] == "Dixon"
 
+def test_create_above18_adds_column():
+    '''
+    Tests the transformation function create_above18.
+    '''
 
-def test_remove_missing_name_removes_rows_without_name():
-    df = load_rows("test_missing_name.csv")
+    df = load_rows("test_above18.csv")
 
-    result = remove_missing_name(df)
+    result = create_above18(df)
 
-    assert len(result) == len(df) - 1
-    assert result["name"].isna().sum() == 0
+    assert "above_18" in result.columns
 
-# def test_create_above18_adds_column():
-#     df = load_rows("test_success.csv")
+    expected = [False, True, True, True, True, False]
 
-#     result = create_above18(df)
-
-#     assert "above_18" in result.columns
-#     assert result.loc[0, "above_18"] is True
-
-# def test_create_membership_id_adds_column():
-#     df = load_rows("test_success.csv")
-
-#     result = create_membership_id(df)
-
-#     assert "membership_id" in result.columns
-    # assert result.loc[0, "membership_id"].startswith("Smith_")
+    assert result["above_18"].tolist() == expected
+    # assert result.loc[0, "above_18"] is True

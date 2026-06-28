@@ -8,6 +8,10 @@ REFERENCE_DATE = pd.Timestamp("2022-01-01")
 # ---------- DataFrame transformations ----------
 
 def format_birthday(df):
+    """
+    Apply helper function called normalize_date to the date_of_birth column
+    Standardizes different date formats
+    """
     df = df.copy()
 
     df["date_of_birth"] = (
@@ -18,11 +22,11 @@ def format_birthday(df):
     return df
 
 
-def remove_missing_name(df):
-    return df.dropna(subset=["name"])
-
-
 def create_above18(df):
+    """
+    Apply helper function called validate_above_18 to the date_of_birth column
+    Note that this should only be applied after format_birthday function is called to avoid odd formats. 
+    """
     df = df.copy()
 
     df["above_18"] = (
@@ -33,7 +37,11 @@ def create_above18(df):
     return df
 
 
-def create_membership_id(df):
+def create_membership_id_columns(df):
+    """
+    Apply helper function called generate_membership_id using last_name and date_of_birth columns
+    Note that this should only be applied after format_birthday function is called to avoid odd formats. 
+    """
     df = df.copy()
 
     df["membership_id"] = df.apply(
@@ -47,6 +55,9 @@ def create_membership_id(df):
     return df
 
 def split_name_columns(df):
+    """
+    Apply helper function called split_name using name column
+    """
     df = df.copy()
 
     df[["first_name", "last_name"]] = (

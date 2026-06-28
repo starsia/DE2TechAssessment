@@ -1,7 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-cd ~/DE2TechAssessment
+set -e
 
-source myenv/bin/activate
+PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
-python -m src.data_pipelines.pipeline
+cd "$PROJECT_ROOT"
+
+export PYTHONPATH="$PROJECT_ROOT/src"
+
+python -m data_pipelines.pipeline

@@ -150,3 +150,39 @@ Possible improvements include:
 - integrating PostgreSQL authentication with enterprise IAM (LDAP, Active Directory, Okta, or cloud IAM) to centralize user management.
 
 This design keeps the operational database secure while remaining simple, scalable, and aligned with the access requirements specified in the problem statement.
+
+## Problem statement: Design 2
+
+## Design
+
+<img src="../assets/Section3.2.png" alt="Design 2 Architecture Diagram" width="auto"/>
+
+High availability is managed by using multiple availability zones (AZs) within a region. Each AZ is isolated from failures in other AZs, and provides inexpensive, low-latency network connectivity to other AZs in the same region. The architecture is designed to be fault-tolerant and highly available by deploying resources across multiple AZs.
+
+Security is managed by using a combination of IAM roles, security groups, and VPCs to control access to resources.
+
+Low Latency is achieved by using edge locations and content delivery networks (CDNs) to cache frequently accessed data closer to users like CloudFront.
+
+Elasticity is achieved by using auto-scaling groups and serverless services like AWS Lambda to automatically adjust resources based on demand.
+
+Efficiency is achieved by using serverless services like AWS Lambda and managed services like Amazon S3 and Amazon RDS to reduce operational overhead and costs.
+
+Least Privilege is achieved by using IAM roles and policies to grant only the necessary permissions to users and services.
+
+Fault Tolerance and Disaster Recovery is achieved by using multi-AZ deployments, automated backups, and cross-region replication for critical data. We also can rely on multi-AZ RDS, S3 versioning (optional), automated RDS snapshots and cross-region backups (optional).
+
+Manageability is achieved by using managed services like Amazon RDS and Amazon S3, which handle maintenance tasks like patching and backups.
+
+## Assumptions
+
+- Images are uploaded through either a REST API or a Kafka producer.
+- The image processing code already exists and only needs to be deployed.
+- Images are treated as unstructured objects and stored in Amazon S3.
+- The processing code can run in containers, so ECS Fargate is the best fit.
+- Analysts query data in S3 using Athena rather than requiring a heavier warehouse.
+- Kafka is managed by Amazon MSK and accessed privately from the company’s streaming app.
+- Images are the primary payload; metadata is stored separately for querying and retention control.
+- Metadata is stored separately in PostgreSQL to support relational queries.
+- Business Intelligence workloads are read-only and query data through Athena and QuickSight rather than directly accessing the operational database.
+- Images and associated metadata must be retained for 7 days, after which they are automatically deleted using S3 Lifecycle policies (and a corresponding metadata cleanup process, such as a scheduled Lambda or database job).
+  The architecture targets high availability, least privilege, managed services, and serverless components where practical to reduce operational overhead and cost.

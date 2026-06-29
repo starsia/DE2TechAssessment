@@ -8,6 +8,8 @@ I made direct decisions on how to handle some edge cases which were not explicit
 
 - I decided that individuals above 18 years old include those who are 18 from the reference date provided in the assignment. This is because the assignment did not specify whether to include or exclude those who are exactly 18 years old, and I believe it is reasonable to include them.
 - How to handle specific names such as "Mr. William Dixon"? Since we are not opinionated on dropping specific parts of names, the split between first and last name will be done on the last space encountered. This will get us Mr William as the first name and Dixon as the last name.
+- I've added a helper function and a corresponding transformation to clean up spaces in the phone number field. I believe it is helpful to clean up the spaces to ensure that the phone number is in a consistent format.
+- I noticed that the emails contain uppercase letters. According to the RFC 5321 standard, email addresses are case-insensitive, so it should not matter. Most of the dataset is consistent with this format of email addresses. For the purposes of this assignment, I will not change this, but it is worth noting.
 
 ### Project structure
 

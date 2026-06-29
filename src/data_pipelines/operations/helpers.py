@@ -56,3 +56,12 @@ def split_name(name: str) -> tuple[str, str]:
         return parts[0], ""
 
     return parts[0], parts[1]
+
+def remove_gap_in_mobile_no(mobile_no: str) -> str | None:
+    """
+    Remove blank space between some mobile numbers eg. (9128 8493)
+    """
+    if not mobile_no:
+        return None
+
+    return mobile_no.replace(" ", "")

@@ -11,6 +11,11 @@ from .validators import (
     validate_above18,
     validate_name
 )
-from .helpers import normalize_date, generate_membership_id, split_name
+from .helpers import (
+    normalize_date,
+    generate_membership_id,
+    split_name,
+    remove_gap_in_mobile_no
+)
 from .writer import write
 from .constants import REFERENCE_DATE

@@ -12,6 +12,7 @@ from data_pipelines.operations.transformations import (
     format_birthday,
     create_above18,
     create_membership_id_columns,
+    remove_gap_in_mobile_no_column,
 )
 
 from data_pipelines.operations.validators import (
@@ -43,6 +44,7 @@ def run_pipeline(df) -> tuple[pd.DataFrame, pd.DataFrame]:
     working = split_name_columns(working)
     working = format_birthday(working)
     working = create_above18(working)
+    working = remove_gap_in_mobile_no_column(working)
 
     # ---------------------------------------
     # Validation

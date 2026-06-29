@@ -66,34 +66,28 @@ We will use cron to schedule the pipeline. The pipeline will be scheduled to run
 
 The script can be found in `scripts/run_pipeline.sh`
 
-Note we have to make it executable by running the following command in the terminal:
+Note we have to make a few files executable by running the following command in the terminal:
 
 ```bash
-chmod +x scripts/run_pipeline.sh
+chmod +x scripts/run_pipeline.sh scripts/install_cron.sh scripts/remove_cron.sh
 ```
 
-Note the path you are currently in. You can find it by running the following command in the terminal:
+We can now schedule the pipeline to run every hour by executing this script (remember to chmod):
 
 ```
-pwd
+./scripts/install_cron.sh
 ```
 
-We will use cron to schedule the pipeline.
+We can clear the cron job we created by running the following command in the terminal:
 
 ```
-crontab -e
+./scripts/remove_cron.sh
 ```
 
-Then add the following line to the crontab file:
+Note that outside of cron, we can run the pipeline manually by running the pipeline.py script. We can execute the following command in the terminal:
 
 ```
-0 * * * * /bin/bash "$(pwd)/scripts/run_pipeline.sh" >> "$(USR_root)/cron_pipeline.log" 2>&1
-```
-
-We can check the cron logs by running the following command in the terminal:
-
-```bash
-cat ~/cron_pipeline.log
+./scripts/run_pipeline.sh
 ```
 
 ### How to run

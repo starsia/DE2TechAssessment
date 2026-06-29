@@ -24,3 +24,19 @@ GROUP BY
     m.first_name,
     m.last_name
 ORDER BY total_spent DESC;
+
+CREATE OR REPLACE VIEW top_manufacturers_by_revenue AS
+SELECT
+    m.manufacturer_id,
+    m.manufacturer_name,
+    SUM(ti.quantity * ti.unit_price) AS total_revenue
+FROM manufacturers m
+JOIN items i
+    ON m.manufacturer_id = i.manufacturer_id
+JOIN transaction_items ti
+    ON i.item_id = ti.item_id
+GROUP BY
+    m.manufacturer_id,
+    m.manufacturer_name
+ORDER BY
+    total_revenue DESC;

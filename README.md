@@ -10,91 +10,6 @@ Each section includes implementation, documentation, and supporting scripts.
 
 ---
 
-# Repository Structure
-
-```text
-.
-├── ./AGENTS.md
-├── ./README.md
-├── ./agents
-│   └── ./agents/skills
-│       ├── ./agents/skills/data_pipelines.md
-│       ├── ./agents/skills/database_design.md
-│       └── ./agents/skills/system_design.md
-├── ./assets
-│   └── ./assets/Section3.2.png
-├── ./compose.yaml
-├── ./data
-│   ├── ./data/output
-│   │   ├── ./data/output/20260629_220204
-│   │   │   └── ./data/output/20260629_220204/input
-│   │   ├── ./data/output/20260629_221130
-│   │   │   └── ./data/output/20260629_221130/input
-│   │   ├── ./data/output/20260629_221705
-│   │   │   └── ./data/output/20260629_221705/input
-│   │   └── ./data/output/20260629_222004
-│   │       └── ./data/output/20260629_222004/input
-│   └── ./data/to_process
-│       ├── ./data/to_process/applications_dataset_1.csv
-│       └── ./data/to_process/applications_dataset_2.csv
-├── ./database
-│   ├── ./database/er_diagram
-│   │   └── ./database/er_diagram/ER_diagram.png
-│   ├── ./database/init
-│   │   ├── ./database/init/001_create_tables.sql
-│   │   ├── ./database/init/002_constraints_and_indexes.sql
-│   │   ├── ./database/init/003_optional_roles_grants.sql
-│   │   ├── ./database/init/004_insert_members.sql
-│   │   ├── ./database/init/005_insert_manufacturers.sql
-│   │   ├── ./database/init/006_insert_items.sql
-│   │   ├── ./database/init/007_insert_transactions.sql
-│   │   ├── ./database/init/008_insert_transaction_items.sql
-│   │   └── ./database/init/009_create_views.sql
-│   └── ./database/queries
-│       ├── ./database/queries/top-10-members-by-spending.sql
-│       └── ./database/queries/top-3-most-frequently-bought-items.sql
-├── ./docs
-│   ├── ./docs/section1_data_pipelines.md
-│   ├── ./docs/section2_database_design.md
-│   └── ./docs/section3_system_design.md
-├── ./processed_dataset
-│   └── ./processed_dataset/20260629_215505
-│       ├── ./processed_dataset/20260629_215505/input
-│       │   ├── ./processed_dataset/20260629_215505/input/applications_dataset_1.csv
-│       │   └── ./processed_dataset/20260629_215505/input/applications_dataset_2.csv
-│       ├── ./processed_dataset/20260629_215505/successful.csv
-│       └── ./processed_dataset/20260629_215505/unsuccessful.csv
-├── ./requirements.txt
-├── ./scripts
-│   ├── ./scripts/install_cron.sh
-│   ├── ./scripts/remove_cron.sh
-│   └── ./scripts/run_pipeline.sh
-├── ./src
-│   ├── ./src/data_pipelines
-│   │   ├── ./src/data_pipelines/operations
-│   │   │   ├── ./src/data_pipelines/operations/__init__.py
-│   │   │   ├── ./src/data_pipelines/operations/constants.py
-│   │   │   ├── ./src/data_pipelines/operations/helpers.py
-│   │   │   ├── ./src/data_pipelines/operations/reader.py
-│   │   │   ├── ./src/data_pipelines/operations/transformations.py
-│   │   │   ├── ./src/data_pipelines/operations/validators.py
-│   │   │   └── ./src/data_pipelines/operations/writer.py
-│   │   └── ./src/data_pipelines/pipeline.py
-│   └── ./src/system_design
-└── ./tests
-    └── ./tests/data_pipelines
-        ├── ./tests/data_pipelines/fixtures
-        │   ├── ./tests/data_pipelines/fixtures/test_above18.csv
-        │   └── ./tests/data_pipelines/fixtures/test_shortened_applications_dataset_1.csv
-        ├── ./tests/data_pipelines/test_helpers.py
-        ├── ./tests/data_pipelines/test_pipeline.py
-        ├── ./tests/data_pipelines/test_transformations.py
-        └── ./tests/data_pipelines/test_validators.py
-
-```
-
----
-
 # Section 1 — Data Pipeline
 
 The first section implements an hourly batch ETL pipeline that processes membership applications.
@@ -354,3 +269,88 @@ Throughout the assessment, the solutions were designed with the following engine
 - High availability
 - Cloud-native architecture
 - Security by design
+
+---
+
+# Repository Structure
+
+```text
+.
+├── ./AGENTS.md
+├── ./README.md
+├── ./agents
+│   └── ./agents/skills
+│       ├── ./agents/skills/data_pipelines.md
+│       ├── ./agents/skills/database_design.md
+│       └── ./agents/skills/system_design.md
+├── ./assets
+│   └── ./assets/Section3.2.png
+├── ./compose.yaml
+├── ./data
+│   ├── ./data/output
+│   │   ├── ./data/output/20260629_220204
+│   │   │   └── ./data/output/20260629_220204/input
+│   │   ├── ./data/output/20260629_221130
+│   │   │   └── ./data/output/20260629_221130/input
+│   │   ├── ./data/output/20260629_221705
+│   │   │   └── ./data/output/20260629_221705/input
+│   │   └── ./data/output/20260629_222004
+│   │       └── ./data/output/20260629_222004/input
+│   └── ./data/to_process
+│       ├── ./data/to_process/applications_dataset_1.csv
+│       └── ./data/to_process/applications_dataset_2.csv
+├── ./database
+│   ├── ./database/er_diagram
+│   │   └── ./database/er_diagram/ER_diagram.png
+│   ├── ./database/init
+│   │   ├── ./database/init/001_create_tables.sql
+│   │   ├── ./database/init/002_constraints_and_indexes.sql
+│   │   ├── ./database/init/003_optional_roles_grants.sql
+│   │   ├── ./database/init/004_insert_members.sql
+│   │   ├── ./database/init/005_insert_manufacturers.sql
+│   │   ├── ./database/init/006_insert_items.sql
+│   │   ├── ./database/init/007_insert_transactions.sql
+│   │   ├── ./database/init/008_insert_transaction_items.sql
+│   │   └── ./database/init/009_create_views.sql
+│   └── ./database/queries
+│       ├── ./database/queries/top-10-members-by-spending.sql
+│       └── ./database/queries/top-3-most-frequently-bought-items.sql
+├── ./docs
+│   ├── ./docs/section1_data_pipelines.md
+│   ├── ./docs/section2_database_design.md
+│   └── ./docs/section3_system_design.md
+├── ./processed_dataset
+│   └── ./processed_dataset/20260629_215505
+│       ├── ./processed_dataset/20260629_215505/input
+│       │   ├── ./processed_dataset/20260629_215505/input/applications_dataset_1.csv
+│       │   └── ./processed_dataset/20260629_215505/input/applications_dataset_2.csv
+│       ├── ./processed_dataset/20260629_215505/successful.csv
+│       └── ./processed_dataset/20260629_215505/unsuccessful.csv
+├── ./requirements.txt
+├── ./scripts
+│   ├── ./scripts/install_cron.sh
+│   ├── ./scripts/remove_cron.sh
+│   └── ./scripts/run_pipeline.sh
+├── ./src
+│   ├── ./src/data_pipelines
+│   │   ├── ./src/data_pipelines/operations
+│   │   │   ├── ./src/data_pipelines/operations/__init__.py
+│   │   │   ├── ./src/data_pipelines/operations/constants.py
+│   │   │   ├── ./src/data_pipelines/operations/helpers.py
+│   │   │   ├── ./src/data_pipelines/operations/reader.py
+│   │   │   ├── ./src/data_pipelines/operations/transformations.py
+│   │   │   ├── ./src/data_pipelines/operations/validators.py
+│   │   │   └── ./src/data_pipelines/operations/writer.py
+│   │   └── ./src/data_pipelines/pipeline.py
+│   └── ./src/system_design
+└── ./tests
+    └── ./tests/data_pipelines
+        ├── ./tests/data_pipelines/fixtures
+        │   ├── ./tests/data_pipelines/fixtures/test_above18.csv
+        │   └── ./tests/data_pipelines/fixtures/test_shortened_applications_dataset_1.csv
+        ├── ./tests/data_pipelines/test_helpers.py
+        ├── ./tests/data_pipelines/test_pipeline.py
+        ├── ./tests/data_pipelines/test_transformations.py
+        └── ./tests/data_pipelines/test_validators.py
+
+```

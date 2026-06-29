@@ -1,116 +1,356 @@
-# Data Engineer (II) Tech Challenge
----
-This test is split into 3 sections:
-1. Data Pipelines
-2. Databases 
+# DE2 Technical Assessment
+
+This repository contains my submission for the DE2 Technical Assessment. The solution is divided into three independent sections:
+
+1. Data Engineering Pipeline (ETL)
+2. Database Design
 3. System Design
 
----
-## Submission Guidelines
-Please create a GitHub repository containing your submission and send us an email containing a link to the repository. Ensure that the repository is marked as `Private`, and grant access to the users provided to you separately.
-
-Dos:
-- Frequent commits
-- Descriptive commit messages
-- Clear documentation
-- Comments in your code
-
-Don't:
-- Only one commit containing all the files
-- Submitting a zip file
-- Sparse or absent documentation
-- Code which is hard to read
----
-## Section 1: Data Pipelines
-An e-commerce company requires that users sign up for a membership on the website in order to purchase a product from the platform. As a data engineer under this company, you are tasked with designing and implementing a pipeline to process the membership applications submitted by users on an hourly interval.
-
-Applications are batched into a varying number of datasets and dropped into a folder on an hourly basis. You are required to set up a pipeline to ingest, clean, perform validity checks, and create membership IDs for successful applications. An application is successful if:
-
-- Application mobile number is 8 digits
-- Applicant is over 18 years old as of 1 Jan 2022
-- Applicant has a valid email (email ends with @emailprovider.com or @emailprovider.net)
-
-You are required to format datasets in the following manner:
-
-- Split name into first_name and last_name
-- Format birthday field into YYYYMMDD
-- Remove any rows which do not have a name field (treat this as unsuccessful applications)
-- Create a new field named above_18 based on the applicant's birthday
-- Membership IDs for successful applications should be the user's last name, followed by a SHA256 hash of the applicant's birthday, truncated to first 5 digits of hash (i.e <last_name>_<hash(YYYYMMDD)>)
-
-You are required to consolidate these datasets and output the successful applications into a folder, which will be picked up by downstream engineers. Unsuccessful applications should be consolidated and dropped into a separate folder.
-
-You can use common scheduling solutions such as cron or airflow to implement the scheduling component. Please provide a markdown file as documentation.
-
-Note: Please submit the processed dataset and scripts used
-
-## Section 2: Databases
-
-You are the tech lead for an e-commerce company that operates on the cloud. The company allows users to sign up as members on their website and make purchases on items listed. You are required to design and implement a pipeline that processes membership applications and determine if an application is successful or unsuccessful. Applications are dropped into a location for processing. Engineers have already written code to determine a successful or unsuccessful application, as well as creating membership IDs for successful applications. You may use the processed datasets from section 1 as reference. Successful applications should be sent to a location for storage and reference. 
-
-The e-commerce company also requires you to set up a database for their sales transactions. 
-Set up a PostgreSQL database using the Docker [image](https://hub.docker.com/_/postgres) provided. We expect at least a Dockerfile which will stand up your database with the DDL statements to create the necessary tables. You are required to produce entity-relationship diagrams as necessary to illustrate your design, along with the DDL statements that will be required to stand up the database. 
-The following are known for each item listed for sale on the e-commerce website:
-- Item Name
-- Manufacturer Name
-- Cost
-- Weight (in kg)
-
-Each transaction made by a member contains the following information:
-- Membership ID
-- Items bought
-- Total items price
-- Total items weight
-
-Analysts from the e-commerce company will need to query some information from the database. Below are 2 of the sample queries from the analysts. Do note to design your database to account for a wide range of business use cases and queries. 
-You are tasked to write a SQL statement for each of the following tasks:
-1. Which are the top 10 members by spending
-2. Which are the top 3 items that are frequently bought by members
-
+Each section includes implementation, documentation, and supporting scripts.
 
 ---
 
-## Section 3: System Design
+# Repository Structure
 
-### Design 1
-We will be referencing the database from Section2 in this design. This database will be used by several teams within the company to track the orders of members. You are required to implement a strategy for accessing this database based on the various teams' needs. These teams include:
-- Logistics: 
-    - Get the sales details (in particular the weight of the total items bought)
-    - Update the table for completed transactions
-- Analytics:
-    - Perform analysis on the sales and membership status
-    - Should not be able to perform updates on any tables
-- Sales:
-    - Update database with new items
-    - Remove old items from database
+```text
+.
+├── ./AGENTS.md
+├── ./README.md
+├── ./agents
+│   └── ./agents/skills
+│       ├── ./agents/skills/data_pipelines.md
+│       ├── ./agents/skills/database_design.md
+│       └── ./agents/skills/system_design.md
+├── ./assets
+│   └── ./assets/Section3.2.png
+├── ./compose.yaml
+├── ./data
+│   ├── ./data/output
+│   │   ├── ./data/output/20260629_220204
+│   │   │   └── ./data/output/20260629_220204/input
+│   │   ├── ./data/output/20260629_221130
+│   │   │   └── ./data/output/20260629_221130/input
+│   │   ├── ./data/output/20260629_221705
+│   │   │   └── ./data/output/20260629_221705/input
+│   │   └── ./data/output/20260629_222004
+│   │       └── ./data/output/20260629_222004/input
+│   └── ./data/to_process
+│       ├── ./data/to_process/applications_dataset_1.csv
+│       └── ./data/to_process/applications_dataset_2.csv
+├── ./database
+│   ├── ./database/er_diagram
+│   │   └── ./database/er_diagram/ER_diagram.png
+│   ├── ./database/init
+│   │   ├── ./database/init/001_create_tables.sql
+│   │   ├── ./database/init/002_constraints_and_indexes.sql
+│   │   ├── ./database/init/003_optional_roles_grants.sql
+│   │   ├── ./database/init/004_insert_members.sql
+│   │   ├── ./database/init/005_insert_manufacturers.sql
+│   │   ├── ./database/init/006_insert_items.sql
+│   │   ├── ./database/init/007_insert_transactions.sql
+│   │   ├── ./database/init/008_insert_transaction_items.sql
+│   │   └── ./database/init/009_create_views.sql
+│   └── ./database/queries
+│       ├── ./database/queries/top-10-members-by-spending.sql
+│       └── ./database/queries/top-3-most-frequently-bought-items.sql
+├── ./docs
+│   ├── ./docs/section1_data_pipelines.md
+│   ├── ./docs/section2_database_design.md
+│   └── ./docs/section3_system_design.md
+├── ./processed_dataset
+│   └── ./processed_dataset/20260629_215505
+│       ├── ./processed_dataset/20260629_215505/input
+│       │   ├── ./processed_dataset/20260629_215505/input/applications_dataset_1.csv
+│       │   └── ./processed_dataset/20260629_215505/input/applications_dataset_2.csv
+│       ├── ./processed_dataset/20260629_215505/successful.csv
+│       └── ./processed_dataset/20260629_215505/unsuccessful.csv
+├── ./requirements.txt
+├── ./scripts
+│   ├── ./scripts/install_cron.sh
+│   ├── ./scripts/remove_cron.sh
+│   └── ./scripts/run_pipeline.sh
+├── ./src
+│   ├── ./src/data_pipelines
+│   │   ├── ./src/data_pipelines/operations
+│   │   │   ├── ./src/data_pipelines/operations/__init__.py
+│   │   │   ├── ./src/data_pipelines/operations/constants.py
+│   │   │   ├── ./src/data_pipelines/operations/helpers.py
+│   │   │   ├── ./src/data_pipelines/operations/reader.py
+│   │   │   ├── ./src/data_pipelines/operations/transformations.py
+│   │   │   ├── ./src/data_pipelines/operations/validators.py
+│   │   │   └── ./src/data_pipelines/operations/writer.py
+│   │   └── ./src/data_pipelines/pipeline.py
+│   └── ./src/system_design
+└── ./tests
+    └── ./tests/data_pipelines
+        ├── ./tests/data_pipelines/fixtures
+        │   ├── ./tests/data_pipelines/fixtures/test_above18.csv
+        │   └── ./tests/data_pipelines/fixtures/test_shortened_applications_dataset_1.csv
+        ├── ./tests/data_pipelines/test_helpers.py
+        ├── ./tests/data_pipelines/test_pipeline.py
+        ├── ./tests/data_pipelines/test_transformations.py
+        └── ./tests/data_pipelines/test_validators.py
 
+```
 
-### Design 2
+---
 
-You are designing data infrastructure on the cloud for a company whose main business is in processing images.
+# Section 1 — Data Pipeline
 
-The company has a web application which allows users to upload images to the cloud using an API. There is also a separate web application which hosts a Kafka stream that uploads images to the same cloud environment. This Kafka stream has to be managed by the company's engineers. 
+The first section implements an hourly batch ETL pipeline that processes membership applications.
 
-Code has already been written by the company's software engineers to process the images. This code has to be hosted on the cloud. For archival purposes, the images and their metadata have to be stored in the cloud environment for 7 days, after which they have to be purged from the environment for compliance and privacy. The cloud environment should also host a Business Intelligence resource where the company's analysts can access and perform analytical computation on the data stored.
+The pipeline performs the following stages:
 
-As a technical lead of the company, you are required to produce a system architecture diagram (Visio, PowerPoint, draw.io) depicting the end-to-end flow of the aforementioned pipeline. You may use any of the cloud providers (e.g. AWS, Azure, GCP) to host the environment. The architecture should specifically address the requirements/concerns above. 
+- Extracts all CSV files dropped into `data/to_process`
+- Consolidates multiple datasets into a single processing batch
+- Cleans and transforms applicant information
+- Validates applications against the business rules
+- Generates membership IDs for successful applicants
+- Separates successful and unsuccessful applications
+- Stores each execution as an immutable batch
 
-In addition, you will need to address several key points brought by stakeholders. This includes:
-- Securing access to the environment and its resources as the company expands
-- Security of data at rest and in transit
-- Scaling to meet user demand while keeping costs low
-- Maintenance of the environment and assets (including processing scripts)
+Each pipeline execution produces a timestamped batch:
 
+```text
+data/output/
 
-You will need to ensure that the architecture takes into account the best practices of cloud computing. This includes (non-exhaustive):
-- Manageability
+    YYYYMMDD_HHMMSS/
+
+        input/
+            applications_dataset_1.csv
+            applications_dataset_2.csv
+
+        successful.csv
+
+        unsuccessful.csv
+```
+
+This preserves full traceability between processed outputs and their original source files.
+
+### Pipeline Architecture
+
+```
+to_process/
+      │
+      ▼
+ Reader (Extract)
+      │
+      ▼
+Pipeline (Transform + Validate)
+      │
+      ▼
+ Writer (Load)
+      │
+      ▼
+output/<timestamp>/
+    ├── input/
+    ├── successful.csv
+    └── unsuccessful.csv
+```
+
+### Scheduling
+
+The pipeline is scheduled using **cron** and executes every hour.
+
+Helper scripts are provided:
+
+```text
+scripts/
+    run_pipeline.sh
+    install_cron.sh
+    remove_cron.sh
+```
+
+Documentation can be found in:
+
+```
+docs/section1_data_pipelines.md
+```
+
+Processed outputs are stored in:
+
+```
+processed_dataset/
+    └── <timestamp>/
+        ├── input/
+        ├── successful.csv
+        └── unsuccessful.csv
+```
+
+---
+
+# Section 2 — Database Design
+
+The second section designs an OLTP PostgreSQL database for an e-commerce platform.
+
+The schema models:
+
+- Members
+- Manufacturers
+- Items
+- Transactions
+- Transaction Items
+
+using Third Normal Form (3NF).
+
+An Entity Relationship Diagram is included to illustrate the data model.
+
+### Features
+
+- PostgreSQL
+- Docker Compose deployment
+- DDL scripts
+- Seed data
+- Constraints
+- Foreign keys
+- Indexes
+- Analytical SQL views
+
+The repository also includes SQL solutions for the requested analytical questions:
+
+- Top 10 members by spending
+- Top 3 most frequently purchased items
+
+along with an additional example analytical view.
+
+### Database Assets
+
+```
+database/
+
+    er_diagram/
+
+    init/
+        001_create_tables.sql
+        002_constraints_and_indexes.sql
+        003_optional_roles_grants.sql
+        ...
+
+    queries/
+```
+
+Documentation:
+
+```
+docs/section2_database_design.md
+```
+
+---
+
+# Section 3 — System Design
+
+The final section contains two architecture designs.
+
+## Design 1 — Secure Database Access
+
+A Role-Based Access Control (RBAC) strategy is proposed for the PostgreSQL database.
+
+Three business roles are modelled:
+
+- Logistics
+- Analytics
+- Sales
+
+The design applies the Principle of Least Privilege, ensuring each team receives only the permissions required for its responsibilities.
+
+The documentation also discusses:
+
+- Authentication
+- Authorization
+- Database roles
+- Views for analytics
+- Auditing
+- Operational security
+
+---
+
+## Design 2 — Cloud Image Processing Platform
+
+An AWS architecture is proposed for an image processing platform supporting:
+
+- API-based uploads
+- Kafka ingestion
+- Image processing
+- Metadata storage
+- Business Intelligence
+- Seven-day archival policy
+- Monitoring
+- High availability
 - Scalability
-- Secure
-- High Availability
-- Elastic
-- Fault Tolerant and Disaster Recovery
-- Efficient
-- Low Latency
-- Least Privilege
+- Security
 
-Do indicate any assumptions you have made regarding the architecture. You are required to provide a detailed explanation on the diagram.
+The architecture makes use of services including:
+
+- Amazon S3
+- ECS Fargate
+- Amazon MSK
+- API Gateway
+- CloudFront
+- Route53
+- Cognito
+- RDS
+- Glue
+- Athena
+- QuickSight
+- CloudWatch
+- CloudTrail
+- IAM
+- AWS Config
+- WAF
+- Shield
+
+Documentation:
+
+```
+docs/section3_system_design.md
+```
+
+---
+
+# Testing
+
+The ETL pipeline includes both unit and integration tests.
+
+Current test coverage includes:
+
+- Helper functions
+- Transformations
+- Validators
+- End-to-end pipeline execution
+
+Run the test suite with:
+
+```bash
+pytest
+```
+
+---
+
+# Technologies Used
+
+- Python 3.12
+- pandas
+- pytest
+- PostgreSQL 17
+- Docker Compose
+- Bash
+- Cron
+- AWS Architecture (Design)
+
+---
+
+# Design Principles
+
+Throughout the assessment, the solutions were designed with the following engineering principles:
+
+- Separation of concerns
+- Modular pipeline design
+- Reproducible batch processing
+- Traceability of processed datasets
+- Third Normal Form (3NF)
+- Principle of Least Privilege
+- Scalability
+- Maintainability
+- High availability
+- Cloud-native architecture
+- Security by design

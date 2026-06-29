@@ -1,9 +1,12 @@
 CREATE TABLE members (
     membership_id VARCHAR(100) PRIMARY KEY,
+    name VARCHAR(25) NOT NULL,
+    above_18 BOOLEAN NOT NULL,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
+    date_of_birth DATE NOT NULL,
     email VARCHAR(255) NOT NULL,
-    phone_number VARCHAR(20) NOT NULL,
+    mobile_no VARCHAR(8) NOT NULL
 );
 
 CREATE TABLE manufacturers (
@@ -15,7 +18,7 @@ CREATE TABLE items (
     item_id SERIAL PRIMARY KEY,
     item_name VARCHAR(255) NOT NULL,
     manufacturer_id INTEGER NOT NULL,
-
+    price NUMERIC(10,2) NOT NULL,
     weight_kg NUMERIC(10,3) NOT NULL
 );
 

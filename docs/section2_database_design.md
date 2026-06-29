@@ -1,3 +1,5 @@
+# Section 2: Databases
+
 ## Problem Statement
 
 The objective of this section is to design and implement the transactional database for an e-commerce platform. The database must support members purchasing items, maintain the relationships between members, transactions, products and manufacturers, and enable downstream analysts to query business metrics efficiently.

@@ -1,118 +1,250 @@
-## Problem statement
+# Section 1: Data Pipeline
 
-Apply some transformations to the raw CSV files.
+## Problem Statement
 
-### Assumptions
+The objective of this section is to design and implement an hourly ETL pipeline that processes membership applications submitted to an e-commerce platform.
 
-I made direct decisions on how to handle some edge cases which were not explicit:
+Applications arrive as one or more CSV files every hour and are deposited into a processing directory. The pipeline is responsible for:
 
-- I decided that individuals above 18 years old include those who are 18 from the reference date provided in the assignment. This is because the assignment did not specify whether to include or exclude those who are exactly 18 years old, and I believe it is reasonable to include them.
-- How to handle specific names such as "Mr. William Dixon"? Since we are not opinionated on dropping specific parts of names, the split between first and last name will be done on the last space encountered. This will get us Mr William as the first name and Dixon as the last name.
-- I've added a helper function and a corresponding transformation to clean up spaces in the phone number field. I believe it is helpful to clean up the spaces to ensure that the phone number is in a consistent format.
-- I noticed that the emails contain uppercase letters. According to the RFC 5321 standard, email addresses are case-insensitive, so it should not matter. Most of the dataset is consistent with this format of email addresses. For the purposes of this assignment, I will not change this, but it is worth noting.
+- ingesting all incoming datasets
+- cleaning and standardising the data
+- validating each application against the business rules
+- generating membership IDs for successful applicants
+- separating successful and unsuccessful applications
+- producing consolidated output datasets for downstream consumers
 
-### Project structure
+The solution also includes automated scheduling, unit tests, and integration tests to ensure the pipeline behaves correctly as it evolves.
 
-We want to ensure clear separation of concerns in the codebase. The following structure is proposed:
+---
 
-- pipeline.py orchestrates the workflow but contains no business logic.
-- validators.py contains only validation rules that return boolean masks or predicates.
-- helpers.py contains utility functions that are not specific to any transformation or validation.
-- transformations.py contains only deterministic data transformation functions.
-- reader.py and writer.py handle I/O.
-- Unit tests found in tests/data_pipelines verify the helpers, transformations, and validators independently, while a single integration test exercises the full pipeline on a representative batch. It is noted that the integration test will likely need to be updated as the pipeline evolves, but it is important to have a test that verifies the end-to-end functionality of the pipeline.
+# Solution Overview
 
-To summarise, the business rules lives in validators.py, while every column manipulation lives in transformations.py, which makes the project easier to maintain and aligns well with the separation of concerns.
+The pipeline follows a traditional batch ETL architecture.
 
-### Pipeline architecture
+```
+Extract
+    ↓
+Transform
+    ↓
+Validate
+    ↓
+Load
+```
 
-The pipeline.py script orchestrates the workflow of the data pipeline. It reads the raw CSV files, applies the necessary transformations and validations, and writes the processed data to the output files. The script is designed to be modular, allowing for easy addition or modification of transformations and validations as needed.
+Each pipeline execution processes every CSV dropped into the `data/to_process` directory as a single batch. The datasets are consolidated into one DataFrame before business logic is applied.
 
-After processing, we move the processed data into a new folder called "output" to avoid reprocessing the same files in the next cron execution. The output folder will contain two subfolders: "successful" and "unsuccessful", which will contain the processed data for successful and unsuccessful applications, respectively.
-
-The file in the `data/incoming` folder will be moved to `data/raw_archives` to again prevent reprocessing of the same file in the next cron execution.
-
-We model a real ETL batch run, where each execution has its own output directory.
-
-Heres is the overall flow:
-`to_process/` -> reader(extract) -> pipeline (transform) -> writer(load) -> `output/batch_timestamp/` -> `successful.csv` and `unsuccessful.csv`
+Applications are then separated into successful and unsuccessful datasets before being written to a timestamped output directory.
 
 ```
 data/
 ├── to_process/
-│   ├── applications_dataset_1.csv
-│   ├── applications_dataset_2.csv
-│   └── applications_dataset_3.csv
 │
-├── output/
-│   ├── 20260628_180000/
-│   │   ├── input/
-│   │   │   ├── applications_dataset_1.csv
-│   │   │   ├── applications_dataset_2.csv
-│   │   │   └── applications_dataset_3.csv
-│   │   ├── successful.csv
-│   │   └── unsuccessful.csv
-│   │
-│   └── ...
+└── output/
+    └── YYYYMMDD_HHMMSS/
+        ├── input/
+        │   ├── applications_dataset_1.csv
+        │   ├── applications_dataset_2.csv
+        │   └── ...
+        │
+        ├── successful.csv
+        └── unsuccessful.csv
 ```
 
-### Data sources
+Keeping every execution in its own timestamped directory provides a complete audit trail. Each batch preserves the original input files alongside the processed outputs, allowing downstream engineers to trace every generated record back to its source data.
 
-We have two CSV files in data/raw. The extraction pipeline should enter the data/incoming folder and read the CSV files. The pipeline will then apply the necessary transformations and validations to the data, and write the processed data to the data/processed folder. They will be output into the pipeline folder, split into sucessful and unsuccessful.
+---
 
-### Scheduling (cron)
+# Repository Structure
 
-We will use cron to schedule the pipeline. The pipeline will be scheduled to run every hour. The cron job will execute the pipeline.py script, which will orchestrate the workflow and call the necessary functions from the other modules.
+The implementation separates orchestration, business logic and I/O into independent modules.
 
-The script can be found in `scripts/run_pipeline.sh`
+```
+src/
+└── data_pipelines/
+    ├── pipeline.py
+    └── operations/
+        ├── reader.py
+        ├── writer.py
+        ├── helpers.py
+        ├── transformations.py
+        ├── validators.py
+        └── constants.py
+```
 
-Note we have to make a few files executable by running the following command in the terminal:
+Responsibilities are divided as follows:
+
+| Component            | Responsibility                                           |
+| -------------------- | -------------------------------------------------------- |
+| `pipeline.py`        | Orchestrates the ETL workflow                            |
+| `reader.py`          | Reads and consolidates incoming CSV files                |
+| `writer.py`          | Writes processed datasets into timestamped batch folders |
+| `transformations.py` | Performs deterministic column transformations            |
+| `validators.py`      | Implements business validation rules                     |
+| `helpers.py`         | Shared utility functions                                 |
+| `constants.py`       | Shared configuration (e.g. reference date)               |
+
+This separation keeps business rules isolated from orchestration and makes each component independently testable.
+
+---
+
+# Transformations
+
+The following transformations are applied to every application.
+
+| Transformation                   | Purpose                                                 |
+| -------------------------------- | ------------------------------------------------------- |
+| Split name                       | Creates `first_name` and `last_name` columns            |
+| Standardise birthday             | Converts all dates into `YYYYMMDD` format               |
+| Remove spaces from phone numbers | Normalises phone numbers before validation              |
+| Create `above_18`                | Calculates applicant age relative to the reference date |
+| Generate membership ID           | Created only for successful applications                |
+
+Applications without a name are treated as unsuccessful, in accordance with the assignment requirements.
+
+---
+
+# Validation Rules
+
+An application is considered successful only if all validation rules pass.
+
+| Validation    | Rule                                                 |
+| ------------- | ---------------------------------------------------- |
+| Mobile number | Exactly 8 digits                                     |
+| Age           | Applicant is at least 18 years old on 1 January 2022 |
+| Email         | Valid email format                                   |
+
+Applications failing any validation rule are written to `unsuccessful.csv`.
+
+---
+
+# Scheduling
+
+The pipeline is scheduled using **cron**, which is appropriate for a lightweight hourly batch process.
+
+Supporting scripts are located in:
+
+```
+scripts/
+├── run_pipeline.sh
+├── install_cron.sh
+└── remove_cron.sh
+```
+
+Install the hourly schedule:
 
 ```bash
-chmod +x scripts/run_pipeline.sh scripts/install_cron.sh scripts/remove_cron.sh
-```
-
-We can now schedule the pipeline to run every hour by executing this script (remember to chmod):
-
-```
 ./scripts/install_cron.sh
 ```
 
-We can clear the cron job we created by running the following command in the terminal:
+Remove the schedule:
 
-```
+```bash
 ./scripts/remove_cron.sh
 ```
 
-Note that outside of cron, we can run the pipeline manually by running the pipeline.py script. We can execute the following command in the terminal:
+Run the pipeline manually:
 
-```
+```bash
 ./scripts/run_pipeline.sh
 ```
 
-### How to run
+---
 
-We can run the pipeline by executing the following command in the terminal:
+# Testing
 
-```bash
-python pipeline.py
+The pipeline is covered by both unit tests and an integration test to verify correctness at multiple levels.
+
+The test suite is organised as follows:
+
+tests/
+└── data_pipelines/
+├── fixtures/
+│ ├── test_above18.csv
+│ └── test_shortened_applications_dataset_1.csv
+│
+├── test_helpers.py
+├── test_transformations.py
+├── test_validators.py
+└── test_pipeline.py
+
+### Unit Tests
+
+Individual components are tested in isolation to ensure each piece of business logic behaves correctly.
+
+| Test file               | Purpose                                                                                                                   |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| test_helpers.py         | Tests reusable helper functions such as date normalisation and name splitting.                                            |
+| test_transformations.py | Tests each DataFrame transformation independently (birthday formatting, membership ID generation, age calculation, etc.). |
+| test_validators.py      | Tests all validation rules, including email, mobile number and age validation.                                            |
+
+Testing each transformation independently makes failures easy to diagnose and reduces the likelihood of regressions when business rules change.
+
+### Integration Test
+
+The integration test exercises the complete ETL pipeline using a representative batch of applications.
+
+test_pipeline.py verifies that the pipeline:
+
+- successfully reads an input dataset
+- applies all required transformations
+- performs all validation rules
+- separates successful and unsuccessful applications
+- generates membership IDs for successful applicants
+- produces the expected output datasets
+
+This provides confidence that all individual components work correctly when composed into the complete pipeline.
+
+### Test Fixtures
+
+The fixtures/ directory contains representative CSV datasets used throughout the tests. These provide deterministic inputs so that transformations and validation logic can be verified against known expected outputs.
+
+### Running the Tests
+
+Execute the complete test suite with:
+
+```
+pytest
 ```
 
-### Testing and validation
+# Processed Outputs
 
-We will need a way to validate each transformation is working correctly. For this, we will write unit tests for each transformation and validator function. We will also write an integration test that runs the entire pipeline on a sample dataset and checks that the output matches the expected results.
-Here since the pipeline is scheduled to run hourly, we can run the tests by executing the following command in the terminal:
+A sample processed batch is included under:
 
-```bash
-pytest tests/data-pipelines/test_pipeline.py
+```
+samples/
 ```
 
-### Design decisions
+Each sample batch contains:
 
-In the past I've built data pipelines using Airflow using official Docker images, but for this project, I will use cron to schedule the pipeline. The reason is that the pipeline is relatively simple and does not require complex scheduling or dependency management. Cron is lightweight and easy to set up, making it a suitable choice for this project.
+- original input datasets
+- consolidated successful applications
+- consolidated unsuccessful applications
 
-There was some debate about whether to create a package for the pipeline or not. I decided to create a package because it makes testing easier and allows us to update pipelines in different places if we want to make changes to the pipeline.
+These outputs demonstrate the expected results produced by the pipeline.
 
-The constant reference date was lifted into a constants folder to make it easier to update the reference date in the future. This is a good practice as it allows for easy maintenance and updates to the codebase.
+---
 
-### Future improvements
+# Design Decisions
+
+Several implementation decisions were made where the specification left room for interpretation.
+
+- Applicants exactly 18 years old on **1 January 2022** are considered eligible (`>= 18`).
+- Names are split on the final whitespace character so titles (e.g. "Mr. Jeff Baker") remain part of the first name.
+- Phone numbers are normalised by removing embedded spaces before validation.
+- Email validation follows RFC conventions and is case-insensitive.
+- Business logic is separated from orchestration to maximise maintainability and testability.
+- Cron was selected over Airflow because the pipeline consists of a single independent hourly batch without workflow dependencies.
+
+---
+
+# Future Improvements
+
+Given additional time, the pipeline could be extended with:
+
+- configurable input/output locations via environment variables
+- structured logging instead of console output
+- retry handling for failed batches
+- data quality reporting and pipeline metrics
+- Airflow orchestration for production deployments
+- cloud object storage (e.g. Amazon S3) instead of local filesystem storage
+- containerisation of the pipeline using Docker

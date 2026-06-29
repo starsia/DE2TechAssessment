@@ -64,4 +64,4 @@ def remove_gap_in_mobile_no(mobile_no: str) -> str | None:
     if not mobile_no:
         return None
 
-    return mobile_no.replace(" ", "")
+    return str(mobile_no).strip().replace(" ", "")

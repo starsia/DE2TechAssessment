@@ -26,7 +26,7 @@ def test_split_name_adds_first_and_last_name_columns():
     Create two new columns called first_name and last_name 
     Using the split_name function on the 'name' column
     '''
-    df = load_rows("test_success.csv")
+    df = load_rows("test_shortened_applications_dataset_1.csv")
 
     result = split_name_columns(df)
 

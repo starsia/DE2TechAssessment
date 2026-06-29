@@ -1,4 +1,3 @@
-from __future__ import annotations
 from .helpers import generate_membership_id, normalize_date, split_name, remove_gap_in_mobile_no
 from .validators import validate_above18
 import pandas as pd
